@@ -85,11 +85,15 @@ public class Blackjack {
 			//Player's turn
 			boolean playerStands = false;
 			while (!playerStands) {
-				System.out.println("Hit or Stand? (H/S)");
-				if (!inputScan.nextLine().equals("H")) {
+				if (getChoiceInput("h", "s", "Hit or Stand? (h/s) ").equals("s")) {
 					playerStands = true;
 					break;
 				}
+				/*System.out.println("Hit or Stand? (h/s)");
+				if (!inputScan.nextLine().toLowerCase().equals("h")) {
+					playerStands = true;
+					break;
+				}*/
 				int newCard = drawCard();
 				playerCards.add(newCard);
 				System.out.print(playerName + "'s Cards: ");
@@ -129,21 +133,24 @@ public class Blackjack {
 				System.out.println("Push");
 			}
 			
-			System.out.print("Play Again? y/n ");
-			if (playerMoney <= 0 || !inputScan.nextLine().equals("y"))
+			//Asks user if they want to keep playing
+			if (getChoiceInput("y", "n", "Play Again? (y/n) ").equals("n"))
 				isGameOver = true;
+			/*System.out.print("Play Again? y/n ");
+			if (playerMoney <= 0 || !inputScan.nextLine().toLowerCase().equals("y"))
+				isGameOver = true;*/
 		}
 		
 		System.out.println("\nGame Over");
 		if (playerMoney >= startingMoney) {
 			System.out.println("You've gained " + (playerMoney-startingMoney));
 			double percentChange = (double) (playerMoney - startingMoney) * 100 / startingMoney;
-			System.out.println("That's an increase of " + df.format(percentChange) + "%");
+			System.out.println("You've gained " + df.format(percentChange) + "% of your starting money");
 		}
 		else {
 			System.out.println("You've lost " + (startingMoney - playerMoney));
 			double percentChange = (double) (startingMoney - playerMoney)* 100 / startingMoney;
-			System.out.println("That's a decrease of " + df.format(percentChange) + "%");
+			System.out.println("You've lost " + df.format(percentChange) + "% of your starting money");
 		}
 	
 	}
@@ -189,7 +196,7 @@ public class Blackjack {
 		return val + " of " + suit;
 	}
 	
-	//Draws card from currDeck and reshuffles if no cards left
+	//Draws card from currDeck and reshuffles cards if no cards left
 	private static int drawCard() {
 		if (currDeck.isEmpty()) {
 			System.out.println("Out of cards. Shuffling deck...");
@@ -199,9 +206,9 @@ public class Blackjack {
 		return currDeck.remove();
 	}
 	
+	//Calculates the total of a hand of cards
 	private static int calcTotal(List<Integer> cards) {
 		int total = 0;
-		int aceTotal = 0;
 		boolean hasAce = false;
 		for (int card : cards) {
 			int cardVal = Math.min((card-1) % 13 + 1, 10);
@@ -214,8 +221,8 @@ public class Blackjack {
 		return total;
 	}
 	
+	//Prints a hand of cards
 	private static void printCards(List<Integer> cards) {
-		//for (int card : cards) {
 		for (int i = 0; i < cards.size(); i++) {
 			System.out.print(getCardString(cards.get(i)));
 			if (i < cards.size()-1)
@@ -224,6 +231,7 @@ public class Blackjack {
 		System.out.println();
 	}
 	
+	//Gets numerical input from user and ensures its within range
 	private static int getNumericalInput(int min, int max) {
 		int result = 0;
 		boolean validInput = false;
@@ -244,5 +252,21 @@ public class Blackjack {
 		}
 		return result;
 	}
+	
+	private static String getChoiceInput(String choice1, String choice2, String prompt) {
+		String input = "";
+		boolean validInput = false;
+		while (!validInput) {
+			System.out.print(prompt);
+			input = inputScan.nextLine().toLowerCase();
+			if (input.equals(choice1) || input.equals(choice2))
+				validInput = true;
+			else
+				System.out.println("Invalid Input");
+		}
+		return input;
+	}
+	
+	
 
 }
